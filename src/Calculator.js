@@ -3,28 +3,56 @@ export default class Calculator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentNumber: "0",
-            operator: "+",
-            otherNumber: "0"
+            firstNumber: "0",
+            operator: "TBD",
+            secondNumber: "0"
         };
+
         this.PressButton = (symbol) => {
-            console.log(symbol, this.state.currentNumber);
+            console.log(symbol, this.state.firstNumber, this.state.secondNumber);
             if (symbol != " " && symbol != "+" && symbol != "-" && symbol != "*" && symbol != "=")
             {
-                if (this.state.currentNumber == "0")
-                {
-                    this.setState({
-                        currentNumber: symbol
-                    });
+                if (this.state.operator == "TBD") {
+                    if (this.state.firstNumber == "0")
+                    {
+                        this.setState({
+                            firstNumber: symbol
+                        });
+                    }
+                    else
+                    {
+                        this.setState({
+                            firstNumber: this.state.firstNumber + symbol
+                        });
+                    }
                 }
-                else
-                {
-                    this.setState({
-                        currentNumber: this.state.currentNumber + symbol
-                    });
+                else {
+                    if (this.state.secondNumber == "0")
+                    {
+                        this.setState({
+                            secondNumber: symbol
+                        });
+                    }
+                    else
+                    {
+                        this.setState({
+                            secondNumber: this.state.secondNumber + symbol
+                        });
+                    }
                 }
             }
+            else if (symbol != " " && symbol != "=")
+            {
+                this.setState({
+                    operator: symbol
+                });
+            }
+            else if (symbol == "=")
+            {
+                
+            }
         }
+
         this.MakeButton = (symbol) => {
             return (
                 <button className="button" onClick={() => {this.PressButton(symbol);}}>{symbol}</button>
@@ -33,7 +61,7 @@ export default class Calculator extends React.Component {
     }
     render() {
         return <div className="container">
-        <p className="output">{this.state.currentNumber}</p>
+        <p className="output">{this.state.operator == "TBD" ? this.state.firstNumber : this.state.secondNumber}</p>
         {this.MakeButton("7")}
         {this.MakeButton("8")}
         {this.MakeButton("9")}
