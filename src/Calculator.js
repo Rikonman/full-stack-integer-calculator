@@ -5,24 +5,27 @@ export default class Calculator extends React.Component {
         this.state = {
             firstNumber: "0",
             operator: "TBD",
-            secondNumber: "0"
+            secondNumber: "0",
+            result: "0"
         };
 
         this.PressButton = (symbol) => {
-            console.log(symbol, this.state.firstNumber, this.state.secondNumber);
             if (symbol != " " && symbol != "+" && symbol != "-" && symbol != "*" && symbol != "=")
             {
-                if (this.state.operator == "TBD") {
+                if (this.state.operator == "TBD" || this.state.operator == "RESULT") {
+
                     if (this.state.firstNumber == "0")
                     {
                         this.setState({
-                            firstNumber: symbol
+                            firstNumber: symbol,
+                            operator: "TBD"
                         });
                     }
                     else
                     {
                         this.setState({
-                            firstNumber: this.state.firstNumber + symbol
+                            firstNumber: this.state.firstNumber + symbol,
+                            operator: "TBD"
                         });
                     }
                 }
@@ -44,12 +47,39 @@ export default class Calculator extends React.Component {
             else if (symbol != " " && symbol != "=")
             {
                 this.setState({
-                    operator: symbol
+                    operator: symbol,
+                    secondNumber: "0"
                 });
             }
             else if (symbol == "=")
             {
-                
+                let operatorName = "TBD";
+                if (this.state.operator == "+")
+                {
+                    operatorName = "add";
+                }
+                else if (this.state.operator == "-")
+                {
+                    operatorName = "subtract";
+                }
+                else if (this.state.operator == "*")
+                {
+                    operatorName = "multiply";
+                }
+
+                if (operatorName != "TBD") {
+                    fetch(`http://localhost:8080/${operatorName}/${this.state.firstNumber}/${this.state.secondNumber}`)
+                    .then(res => res.json())
+                    .then(resultValue => {
+                        this.setState({
+                            operator: "RESULT",
+                            firstNumber: "0",
+                            secondNumber: "0",
+                            result: resultValue
+                        })
+                    })
+                    .catch(err => console.error(err))
+                }
             }
         }
 
@@ -61,7 +91,8 @@ export default class Calculator extends React.Component {
     }
     render() {
         return <div className="container">
-        <p className="output">{this.state.operator == "TBD" ? this.state.firstNumber : this.state.secondNumber}</p>
+        <p className="output">{this.state.operator == "TBD" ? this.state.firstNumber : 
+            (this.state.operator == "RESULT" ? this.state.result : this.state.secondNumber)}</p>
         {this.MakeButton("7")}
         {this.MakeButton("8")}
         {this.MakeButton("9")}
@@ -81,12 +112,5 @@ export default class Calculator extends React.Component {
       </div>;
     }
 
-    MakeButton(symbol) {
-        
-    }
-      
-    PressButton(symbol) {
-        console.log(symbol);
-        
-    }
+    
 }
